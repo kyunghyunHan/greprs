@@ -1,15 +1,13 @@
-use std::env;
+use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
-use std::io::Error;
+
+use std::env;
+
 pub struct Config {
     pub query: String,
     pub filename: String,
     pub case_sensitive: bool,
-}
-
-pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    vec![]
 }
 impl Config {
     pub fn new(args: &[String]) -> Result<Config, &'static str> {
@@ -29,6 +27,7 @@ impl Config {
         })
     }
 }
+
 pub fn run(config: Config) -> Result<(), Box<Error>> {
     let mut f = File::open(config.filename)?;
 
@@ -47,7 +46,6 @@ pub fn run(config: Config) -> Result<(), Box<Error>> {
 
     Ok(())
 }
-
 #[cfg(test)]
 mod test {
     use super::*;
@@ -79,6 +77,18 @@ Trust me.";
         );
     }
 }
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let mut results = Vec::new();
+
+    for line in contents.lines() {
+        if line.contains(query) {
+            results.push(line);
+        }
+    }
+
+    results
+}
+
 fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     let query = query.to_lowercase();
     let mut results = Vec::new();
